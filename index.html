@@ -130,6 +130,15 @@
       color: #ffffff;
       transform: translateY(-1px);
     }
+    .btn-orange-outline:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .btn-orange-outline:disabled:hover {
+      background: transparent;
+      color: #ffffff;
+      transform: none;
+    }
 
     /* Animated Bitshark headline */
     .headline-wrap {
@@ -300,9 +309,7 @@
     </div>
     <nav class="nav-right">
       <a href="memes.html">Memes</a>
-      <a href="https://dexscreener.com/solana/EKMqWX6Pz4KyCAv87SK4szCYxk6w9HyRfw9ftEGWvU3t" target="_blank" rel="noopener">Dexscreener</a>
-      <span class="ca" id="ca-text">GaJxMSdqEJ7suiKqF7kSjR5kQjqP4ukaracp2bELpump</span>
-      <button class="btn-orange-outline" id="copyButton" type="button">COPY CA</button>
+      <button class="btn-orange-outline" type="button" disabled>COMING SOON</button>
     </nav>
   </header>
 
@@ -354,28 +361,6 @@
   </div>
 
   <div class="footer"><em>All Rights Reserved. Bitshark</em></div>
-
-  <script>
-    (function () {
-      const btn = document.getElementById('copyButton');
-      const ca = document.getElementById('ca-text').textContent.trim();
-      btn.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(ca);
-        } catch (e) {
-          const tmp = document.createElement('input');
-          tmp.value = ca;
-          document.body.appendChild(tmp);
-          tmp.select();
-          document.execCommand('copy');
-          document.body.removeChild(tmp);
-        }
-        const original = btn.textContent;
-        btn.textContent = 'Copied! 🦈';
-        setTimeout(() => { btn.textContent = original; }, 1500);
-      });
-    })();
-  </script>
 
 </body>
 </html>

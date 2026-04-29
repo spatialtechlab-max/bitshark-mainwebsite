@@ -321,7 +321,6 @@
     </div>
     <nav class="nav-right">
       <a href="index.html">Home</a>
-      <a href="https://dexscreener.com/solana/EKMqWX6Pz4KyCAv87SK4szCYxk6w9HyRfw9ftEGWvU3t" target="_blank" rel="noopener">Dexscreener</a>
     </nav>
   </header>
 
@@ -484,8 +483,6 @@
 
           resultImg.src = data.image;
           downloadBtn.href = data.image;
-          const tweet = 'Just made a $BITSHARK meme: "' + prompt + '"\n\n🦈 bitshark.fun';
-          shareBtn.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(tweet);
           resultWrap.style.display = 'block';
           setStatus('Frenzy delivered. 🔥');
           resultWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -540,6 +537,41 @@
       });
       promptEl.addEventListener('keydown', (e) => {
         if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') generate();
+      });
+
+      shareBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        if (!resultImg.src || !lastPrompt) return;
+        const text = `Just made a $BITSHARK meme: "${lastPrompt}"\n\n🦈 bitshark.fun`;
+
+        // Native share with image (mobile + some desktops)
+        if (navigator.canShare) {
+          try {
+            const resp = await fetch(resultImg.src);
+            const blob = await resp.blob();
+            const file = new File([blob], 'bitshark-meme.png', { type: blob.type || 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({ files: [file], text });
+              setStatus('Shared! 🦈');
+              return;
+            }
+          } catch (err) {
+            if (err.name === 'AbortError') return;
+            console.warn('Web Share fell through:', err);
+          }
+        }
+
+        // Fallback: download the image, then open X compose so user attaches it
+        const a = document.createElement('a');
+        a.href = resultImg.src;
+        a.download = 'bitshark-meme.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setStatus('Meme downloaded — attach it in the X tab that just opened 🦈');
+        setTimeout(() => {
+          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+        }, 400);
       });
     })();
   </script>
