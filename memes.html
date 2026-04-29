@@ -544,11 +544,18 @@
         if (!resultImg.src || !lastPrompt) return;
         const text = `Just made a $BITSHARK meme: "${lastPrompt}"\n\n🦈 bitshark.fun`;
 
-        // Native share with image (mobile + some desktops)
-        if (navigator.canShare) {
+        let blob = null;
+        try {
+          blob = await (await fetch(resultImg.src)).blob();
+        } catch (err) {
+          console.warn('Could not fetch meme image as blob:', err);
+        }
+
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        // Mobile: native share sheet attaches the image directly to X / Telegram / etc.
+        if (isMobile && blob && navigator.canShare) {
           try {
-            const resp = await fetch(resultImg.src);
-            const blob = await resp.blob();
             const file = new File([blob], 'bitshark-meme.png', { type: blob.type || 'image/png' });
             if (navigator.canShare({ files: [file] })) {
               await navigator.share({ files: [file], text });
@@ -561,14 +568,28 @@
           }
         }
 
-        // Fallback: download the image, then open X compose so user attaches it
+        // Desktop: copy image to clipboard — user just presses ⌘V in the X compose box.
+        if (blob && navigator.clipboard && window.ClipboardItem) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ [blob.type || 'image/png']: blob }),
+            ]);
+            setStatus('Image copied to clipboard — paste it (⌘V / Ctrl+V) in the X tab 🦈');
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+            return;
+          } catch (err) {
+            console.warn('Clipboard write failed:', err);
+          }
+        }
+
+        // Last resort: download + open X intent, user drags the image in.
         const a = document.createElement('a');
         a.href = resultImg.src;
         a.download = 'bitshark-meme.png';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        setStatus('Meme downloaded — attach it in the X tab that just opened 🦈');
+        setStatus('Meme downloaded — drag it into the X tab that just opened 🦈');
         setTimeout(() => {
           window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
         }, 400);
