@@ -1,4 +1,16 @@
 node_modules/
 .env
+.env.local
 .DS_Store
 npm-debug.log*
+
+# Internal session notes — never push
+CLAUDE.md
+
+# Hostinger deploy artifacts (vestigial, kept locally only)
+hostinger-deploy/
+hostinger-deploy.zip
+wordpress-upload/
+
+# Vercel local
+.vercel

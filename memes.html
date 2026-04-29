@@ -379,12 +379,8 @@
 
   <script>
     (function () {
-      // API base URL — local dev hits same origin; production hits Render.
-      // EDIT THIS after you deploy to Render with your real Render URL (or api.bitshark.fun).
-      const API_BASE = (
-        location.hostname === 'localhost' ||
-        location.hostname === '127.0.0.1'
-      ) ? '' : 'https://bitshark-memes.onrender.com';
+      // Same-origin API on Vercel: serverless functions live at /api/*.
+      const API_BASE = '';
 
       const promptEl = document.getElementById('prompt');
       const generateBtn = document.getElementById('generateBtn');
