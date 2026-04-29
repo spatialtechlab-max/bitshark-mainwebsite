@@ -1,0 +1,15 @@
+# Disable WordPress URL rewriting inside this folder.
+# Lets bitshark.fun/memes serve our static index.html instead of being routed
+# through WordPress's index.php.
+RewriteEngine Off
+DirectoryIndex index.html
+
+# Cache assets aggressively (logo, video, images).
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpg|jpeg|png|webp|svg|mp4|woff2)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=300"
+  </FilesMatch>
+</IfModule>
